@@ -54,6 +54,10 @@ CREATE TABLE IF NOT EXISTS users (
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     ON UPDATE CURRENT_TIMESTAMP
+    pw_reset_token  VARCHAR(255) NULL
+    pw_reset_exp_at DATETIME NULL
+    email_confirmed TINYINT(1) NOT NULL DEFAULT 0,
+    email_confirmed_token VARCHAR(255) NULL;
 ) ENGINE=InnoDB;
 ";
 
@@ -82,28 +86,6 @@ CREATE TABLE IF NOT EXISTS ownerships (
         FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_ownership_share
         FOREIGN KEY (share_id) REFERENCES shares(id)
-) ENGINE=InnoDB;
-";
-
-// TRANSFERS
-$queries[] = "
-CREATE TABLE IF NOT EXISTS transfers (
-    id                  CHAR(36)    NOT NULL PRIMARY KEY,
-    share_id            CHAR(36)    NOT NULL,
-    from_user_id        CHAR(36)    NULL,
-    to_user_id          CHAR(36)    NULL,
-    reason              VARCHAR(255),
-    new_lookup          VARCHAR(255),
-    performed_by_user_id CHAR(36)   NOT NULL,
-    performed_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_transfer_share
-        FOREIGN KEY (share_id) REFERENCES shares(id),
-    CONSTRAINT fk_transfer_from_user
-        FOREIGN KEY (from_user_id) REFERENCES users(id),
-    CONSTRAINT fk_transfer_to_user
-        FOREIGN KEY (to_user_id) REFERENCES users(id),
-    CONSTRAINT fk_transfer_performed_by
-        FOREIGN KEY (performed_by_user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 ";
 
